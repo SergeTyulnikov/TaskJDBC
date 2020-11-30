@@ -14,17 +14,19 @@ public class Util {
     private static final String PASSWORD = "Mercedes69@";
     private static final String FILENAME = "C:/Users/Bobby/IdeaProjects/TaskJDBC/src/main/java/resources/hibernate.cfg.xml";
 
-    private Connection connection;
 
     public Util() {
+
+    }
+
+    public static Connection getConnection() {
+        Connection connection = null;
         try {
             connection = DriverManager.getConnection(URL, USER_NAME, PASSWORD);
+            connection.setAutoCommit(false);
         } catch (SQLException e) {
             System.out.println("Fuck the connection!");
         }
-    }
-
-    public Connection getConnection() {
         return connection;
     }
 
@@ -35,7 +37,6 @@ public class Util {
                 .applySettings(configuration.getProperties());
         return configuration.buildSessionFactory(builder.build());
     }
-
 
 
 }

@@ -9,10 +9,8 @@ public class Main {
     public static void main(String[] args) {
         UserService userService = new UserServiceImpl();
         userService.createUsersTable();
-        userService.saveUser("Sergey", "Tyulnikov", (byte)25);
-        userService.saveUser("Viktor", "Andreev", (byte)23);
-        userService.saveUser("Alexander", "Tyulnikov", (byte)30);
-        userService.saveUser("Robby", "Bobby", (byte)25);
+        userService.saveUser("Sergey", "Tyulnikov", (byte) 25);
+        userService.saveUser("Ekaterina", "Buravtseva", (byte) 24);
         for (User user : userService.getAllUsers()) {
             System.out.println(user);
         }

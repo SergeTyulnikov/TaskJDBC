@@ -3,6 +3,7 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -10,8 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class UserDaoJDBCImpl implements UserDao {
-    public UserDaoJDBCImpl() {
+    private static Connection connection;
 
+    public UserDaoJDBCImpl() {
+        connection = Util.getConnection();
     }
 
     public void createUsersTable() {
@@ -36,7 +39,7 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void removeUserById(long id) {
-        String sql = "DELETE FROM users WHERE id = " + (int)id;
+        String sql = "DELETE FROM users WHERE id = " + (int) id;
         toExecuteQuery(sql);
     }
 
@@ -46,25 +49,23 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public static void toExecuteQuery(String sql) {
-        Util util = new Util();
-        try (Statement statement = util.getConnection().createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             statement.executeUpdate(sql);
+            connection.commit();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
             try {
-                util.getConnection().close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                connection.rollback();
+            } catch (SQLException t) {
+                System.out.println(t.getMessage());
             }
         }
     }
 
     public List<User> getAllUsers() {
         List<User> resultList = new ArrayList<>();
-        Util util = new Util();
         String sql = "SELECT * FROM users";
-        try(Statement statement = util.getConnection().createStatement()) {
+        try (Statement statement = connection.createStatement()) {
             ResultSet resultSet = statement.executeQuery(sql);
             while (resultSet.next()) {
                 String name = resultSet.getString(2);
@@ -72,13 +73,13 @@ public class UserDaoJDBCImpl implements UserDao {
                 byte age = resultSet.getByte(4);
                 resultList.add(new User(name, lastname, age));
             }
+            connection.commit();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
-        } finally {
             try {
-                util.getConnection().close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
+                connection.rollback();
+            } catch (SQLException t) {
+                System.out.println(t.getMessage());
             }
         }
         return resultList;

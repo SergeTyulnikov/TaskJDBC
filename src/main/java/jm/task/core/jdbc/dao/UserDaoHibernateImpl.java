@@ -5,9 +5,12 @@ import jm.task.core.jdbc.util.Util;
 import org.hibernate.*;
 import org.hibernate.exception.SQLGrammarException;
 
+
 import java.util.List;
 
 public class UserDaoHibernateImpl implements UserDao {
+
+
     public UserDaoHibernateImpl() {
 
     }
