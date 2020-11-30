@@ -11,6 +11,8 @@ public class Main {
         userService.createUsersTable();
         userService.saveUser("Sergey", "Tyulnikov", (byte) 25);
         userService.saveUser("Ekaterina", "Buravtseva", (byte) 24);
+        userService.saveUser("Vsevolod", "Volgin", (byte) 27);
+        userService.saveUser("Alexander", "Tyulnikov", (byte) 20);
         for (User user : userService.getAllUsers()) {
             System.out.println(user);
         }
