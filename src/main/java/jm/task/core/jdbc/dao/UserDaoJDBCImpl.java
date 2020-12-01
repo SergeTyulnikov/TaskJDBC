@@ -3,10 +3,7 @@ package jm.task.core.jdbc.dao;
 import jm.task.core.jdbc.model.User;
 import jm.task.core.jdbc.util.Util;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,14 +30,39 @@ public class UserDaoJDBCImpl implements UserDao {
     }
 
     public void saveUser(String name, String lastName, byte age) {
-        String sql = "INSERT INTO users(name, lastname, age) VALUES('" + name + "', '" + lastName + "', '" + age + "')";
-        toExecuteQuery(sql);
+        String sql = "INSERT INTO users(name, lastname, age) VALUES(?, ?, ?)";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, name);
+            preparedStatement.setString(2, lastName);
+            preparedStatement.setByte(3, age);
+            preparedStatement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException t) {
+                System.out.println(t.getMessage());
+            }
+        }
+
         System.out.println("User с именем " + name + " добавлен в базу данных.");
     }
 
     public void removeUserById(long id) {
-        String sql = "DELETE FROM users WHERE id = " + (int) id;
-        toExecuteQuery(sql);
+        String sql = "DELETE FROM users WHERE id = ?";
+        try(PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, id);
+            preparedStatement.executeUpdate();
+            connection.commit();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+            try {
+                connection.rollback();
+            } catch (SQLException t) {
+                System.out.println(t.getMessage());
+            }
+        }
     }
 
     public void cleanUsersTable() {
